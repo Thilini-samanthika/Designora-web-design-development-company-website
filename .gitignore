@@ -1,0 +1,47 @@
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Environment variables (VERY IMPORTANT)
+.env
+
+# VS Code settings
+.vscode/
+
+# Mac system files
+.DS_Store
+
+# Windows system files
+Thumbs.db
+
+# Logs
+*.log
+
+# Database backups
+*.sql
+*.db
+
+# Temporary files
+*.tmp
+*.bak
+
+# Node modules (if frontend tools used)
+node_modules/
+
+# Python build files
+build/
+dist/
+*.egg-info/
+
+# Flask instance folder
+instance/
+
+# Testing cache
+.pytest_cache/

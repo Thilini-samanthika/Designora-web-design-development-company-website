@@ -4,7 +4,7 @@ const navMenu = document.getElementById("nav-menu");
 const navLinks = document.querySelectorAll(".nav-link");
 const navbar = document.getElementById("navbar");
 
-if (navToggle) {
+if (navToggle && navMenu) {
     navToggle.addEventListener("click", () => {
         navMenu.classList.toggle("active");
     });
@@ -12,16 +12,20 @@ if (navToggle) {
 
 navLinks.forEach(link => {
     link.addEventListener("click", () => {
-        navMenu.classList.remove("active");
+        if (navMenu) {
+            navMenu.classList.remove("active");
+        }
     });
 });
 
 // NAVBAR SCROLL EFFECT
 window.addEventListener("scroll", () => {
-    if (window.scrollY > 30) {
-        navbar.classList.add("scrolled");
-    } else {
-        navbar.classList.remove("scrolled");
+    if (navbar) {
+        if (window.scrollY > 30) {
+            navbar.classList.add("scrolled");
+        } else {
+            navbar.classList.remove("scrolled");
+        }
     }
 });
 
@@ -54,17 +58,19 @@ setActiveLink();
 // REVEAL ANIMATION
 const revealItems = document.querySelectorAll(".reveal");
 
-const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add("active");
-        }
+if (revealItems.length > 0) {
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("active");
+            }
+        });
+    }, {
+        threshold: 0.15
     });
-}, {
-    threshold: 0.15
-});
 
-revealItems.forEach(item => revealObserver.observe(item));
+    revealItems.forEach(item => revealObserver.observe(item));
+}
 
 // TEAM CAROUSEL
 const teamTrack = document.getElementById("teamTrack");
@@ -140,11 +146,6 @@ if (teamTrack && teamPrev && teamNext && teamDots && teamCarousel) {
 
         teamPrev.disabled = currentIndex === 0;
         teamNext.disabled = currentIndex === getMaxIndex();
-
-        teamPrev.style.opacity = teamPrev.disabled ? "0.5" : "1";
-        teamNext.style.opacity = teamNext.disabled ? "0.5" : "1";
-        teamPrev.style.cursor = teamPrev.disabled ? "not-allowed" : "pointer";
-        teamNext.style.cursor = teamNext.disabled ? "not-allowed" : "pointer";
     }
 
     function nextSlide() {
@@ -163,14 +164,12 @@ if (teamTrack && teamPrev && teamNext && teamDots && teamCarousel) {
 
     function startAutoSlide() {
         stopAutoSlide();
-
         autoSlide = setInterval(() => {
             if (currentIndex < getMaxIndex()) {
                 currentIndex++;
             } else {
                 currentIndex = 0;
             }
-
             updateCarousel();
         }, 3000);
     }
@@ -212,86 +211,4 @@ if (teamTrack && teamPrev && teamNext && teamDots && teamCarousel) {
     createDots();
     updateCarousel();
     startAutoSlide();
-}
-
-// CONTACT FORM DEMO MESSAGE
-const contactForm = document.getElementById("contact-form");
-const formMessage = document.getElementById("form-message");
-
-if (contactForm) {
-    contactForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-        formMessage.textContent = "Your message has been sent successfully.";
-        contactForm.reset();
-
-        setTimeout(() => {
-            formMessage.textContent = "";
-        }, 3000);
-    });
-}
-// SIGN IN FORM REDIRECT
-const signinForm = document.getElementById("signin-form");
-
-if (signinForm) {
-    signinForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-
-        const email = document.getElementById("signin-email").value.trim();
-        const password = document.getElementById("signin-password").value.trim();
-        const msg = document.getElementById("signin-msg");
-
-        if (!email || !password) {
-            msg.textContent = "Please fill in email and password.";
-            msg.style.color = "red";
-            return;
-        }
-
-        msg.textContent = "Sign in successful. Redirecting...";
-        msg.style.color = "lime";
-
-        setTimeout(() => {
-            window.location.href = "/";
-        }, 1000);
-    });
-}
-
-// SIGN UP FORM REDIRECT
-const signupForm = document.getElementById("signup-form");
-
-if (signupForm) {
-    signupForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-
-        const name = document.getElementById("signup-name").value.trim();
-        const email = document.getElementById("signup-email").value.trim();
-        const password = document.getElementById("signup-password").value.trim();
-        const confirm = document.getElementById("signup-confirm").value.trim();
-        const terms = document.getElementById("terms").checked;
-        const msg = document.getElementById("signup-msg");
-
-        if (!name || !email || !password || !confirm) {
-            msg.textContent = "Please fill in all fields.";
-            msg.style.color = "red";
-            return;
-        }
-
-        if (password !== confirm) {
-            msg.textContent = "Passwords do not match.";
-            msg.style.color = "red";
-            return;
-        }
-
-        if (!terms) {
-            msg.textContent = "Please accept the terms.";
-            msg.style.color = "red";
-            return;
-        }
-
-        msg.textContent = "Account created successfully. Redirecting to Sign In...";
-        msg.style.color = "lime";
-
-        setTimeout(() => {
-            window.location.href = "/signin";
-        }, 1000);
-    });
 }
