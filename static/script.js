@@ -229,3 +229,69 @@ if (contactForm) {
         }, 3000);
     });
 }
+// SIGN IN FORM REDIRECT
+const signinForm = document.getElementById("signin-form");
+
+if (signinForm) {
+    signinForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const email = document.getElementById("signin-email").value.trim();
+        const password = document.getElementById("signin-password").value.trim();
+        const msg = document.getElementById("signin-msg");
+
+        if (!email || !password) {
+            msg.textContent = "Please fill in email and password.";
+            msg.style.color = "red";
+            return;
+        }
+
+        msg.textContent = "Sign in successful. Redirecting...";
+        msg.style.color = "lime";
+
+        setTimeout(() => {
+            window.location.href = "/";
+        }, 1000);
+    });
+}
+
+// SIGN UP FORM REDIRECT
+const signupForm = document.getElementById("signup-form");
+
+if (signupForm) {
+    signupForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById("signup-name").value.trim();
+        const email = document.getElementById("signup-email").value.trim();
+        const password = document.getElementById("signup-password").value.trim();
+        const confirm = document.getElementById("signup-confirm").value.trim();
+        const terms = document.getElementById("terms").checked;
+        const msg = document.getElementById("signup-msg");
+
+        if (!name || !email || !password || !confirm) {
+            msg.textContent = "Please fill in all fields.";
+            msg.style.color = "red";
+            return;
+        }
+
+        if (password !== confirm) {
+            msg.textContent = "Passwords do not match.";
+            msg.style.color = "red";
+            return;
+        }
+
+        if (!terms) {
+            msg.textContent = "Please accept the terms.";
+            msg.style.color = "red";
+            return;
+        }
+
+        msg.textContent = "Account created successfully. Redirecting to Sign In...";
+        msg.style.color = "lime";
+
+        setTimeout(() => {
+            window.location.href = "/signin";
+        }, 1000);
+    });
+}
