@@ -212,3 +212,34 @@ if (teamTrack && teamPrev && teamNext && teamDots && teamCarousel) {
     updateCarousel();
     startAutoSlide();
 }
+const contactForm = document.getElementById("contact-form");
+const formMessage = document.getElementById("form-message");
+
+if (contactForm) {
+    contactForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(contactForm);
+
+        try {
+            const response = await fetch("/contact", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                formMessage.textContent = data.message;
+                formMessage.style.color = "#22c55e";
+                contactForm.reset();
+            } else {
+                formMessage.textContent = data.message || "Something went wrong.";
+                formMessage.style.color = "#ef4444";
+            }
+        } catch (error) {
+            formMessage.textContent = "Server error. Please try again.";
+            formMessage.style.color = "#ef4444";
+        }
+    });
+}

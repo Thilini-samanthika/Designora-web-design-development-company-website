@@ -160,40 +160,26 @@ def logout():
 # CONTACT FORM
 @app.route('/contact', methods=['POST'])
 def contact():
-    data = request.get_json(silent=True)
-
-    if not data:
-        return jsonify({'success': False, 'message': 'Invalid request format.'}), 400
-
-    name = data.get('name', '').strip()
-    email = data.get('email', '').strip()
-    company = data.get('company', '').strip()
-    message = data.get('message', '').strip()
+    name = request.form.get('name')
+    email = request.form.get('email')
+    company = request.form.get('company')
+    contact_number = request.form.get('contact_number')
+    service_type = request.form.get('service_type')
+    message = request.form.get('message')
 
     if not name or not email or not message:
-        return jsonify({'success': False, 'message': 'Please fill in all required fields.'}), 400
-
-    if len(name) > 100 or len(email) > 100 or len(company) > 100 or len(message) > 1000:
-        return jsonify({'success': False, 'message': 'Input is too long.'}), 400
-
-    try:
-        validate_email(email)
-    except EmailNotValidError:
-        return jsonify({'success': False, 'message': 'Invalid email address.'}), 400
+        return jsonify({"success": False, "message": "Missing required fields"})
 
     cur = mysql.connection.cursor()
-    cur.execute(
-        "INSERT INTO contacts (name, email, company, message) VALUES (%s, %s, %s, %s)",
-        (name, email, company, message)
-    )
+    cur.execute("""
+        INSERT INTO project_inquiries
+        (name, email, company, contact_number, service_type, message)
+        VALUES (%s, %s, %s, %s, %s, %s)
+    """, (name, email, company, contact_number, service_type, message))
     mysql.connection.commit()
     cur.close()
 
-    return jsonify({
-        'success': True,
-        'message': f'Thank you {name}! Your message has been received.'
-    })
-
+    return jsonify({"success": True, "message": "Message sent successfully"})
 # START PROJECT / ORDER
 @app.route('/start-project', methods=['POST'])
 def start_project():
