@@ -41,7 +41,8 @@ def is_safe_length(text, max_length):
 limiter = Limiter(
     key_func=get_remote_address,
     app=app,
-    default_limits=["200 per day", "50 per hour"]
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://"
 )
     
 # Splash page
@@ -68,7 +69,7 @@ def signup():
     return render_template('signup.html')
 
 # REGISTER
-
+@limiter.limit("3 per minute")
 @app.route('/register', methods=['POST'])
 def register():
     full_name = request.form.get('full_name', '').strip()
@@ -124,8 +125,8 @@ def register():
     return redirect(url_for('signin'))
 
 # LOGIN
-@app.route('/login', methods=['POST'])
 @limiter.limit("5 per minute")
+@app.route('/login', methods=['POST'])
 def login():
     email = request.form.get('email', '').strip()
     password = request.form.get('password', '').strip()
@@ -158,28 +159,43 @@ def logout():
     return redirect(url_for('splash'))
 
 # CONTACT FORM
+@limiter.limit("5 per minute")
 @app.route('/contact', methods=['POST'])
 def contact():
-    name = request.form.get('name')
-    email = request.form.get('email')
-    company = request.form.get('company')
-    contact_number = request.form.get('contact_number')
-    service_type = request.form.get('service_type')
-    message = request.form.get('message')
+    try:
+        name = request.form.get('name')
+        email = request.form.get('email')
+        company = request.form.get('company')
+        contact_number = request.form.get('contact_number')
+        service_type = request.form.get('service_type')
+        message = request.form.get('message')
 
-    if not name or not email or not message:
-        return jsonify({"success": False, "message": "Missing required fields"})
+        if not name or not email or not message:
+            return jsonify({
+                "success": False,
+                "message": "Please fill in all required fields."
+            })
 
-    cur = mysql.connection.cursor()
-    cur.execute("""
-        INSERT INTO project_inquiries
-        (name, email, company, contact_number, service_type, message)
-        VALUES (%s, %s, %s, %s, %s, %s)
-    """, (name, email, company, contact_number, service_type, message))
-    mysql.connection.commit()
-    cur.close()
+        cur = mysql.connection.cursor()
+        cur.execute("""
+            INSERT INTO project_inquiries
+            (name, email, company, contact_number, service_type, message)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (name, email, company, contact_number, service_type, message))
 
-    return jsonify({"success": True, "message": "Message sent successfully"})
+        mysql.connection.commit()
+        cur.close()
+
+        return jsonify({
+            "success": True,
+            "message": "Message sent successfully!"
+        })
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Error: {str(e)}"
+        })
 # START PROJECT / ORDER
 @app.route('/start-project', methods=['POST'])
 def start_project():

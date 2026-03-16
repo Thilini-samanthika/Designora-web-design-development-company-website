@@ -221,6 +221,9 @@ if (contactForm) {
 
         const formData = new FormData(contactForm);
 
+        formMessage.textContent = "Sending...";
+        formMessage.style.color = "#facc15";
+
         try {
             const response = await fetch("/contact", {
                 method: "POST",
@@ -230,15 +233,15 @@ if (contactForm) {
             const data = await response.json();
 
             if (data.success) {
-                formMessage.textContent = data.message;
+                formMessage.textContent = " Message sent successfully!";
                 formMessage.style.color = "#22c55e";
                 contactForm.reset();
             } else {
-                formMessage.textContent = data.message || "Something went wrong.";
+                formMessage.textContent = data.message || " Failed to send message.";
                 formMessage.style.color = "#ef4444";
             }
         } catch (error) {
-            formMessage.textContent = "Server error. Please try again.";
+            formMessage.textContent = " Server error. Please try again.";
             formMessage.style.color = "#ef4444";
         }
     });
