@@ -2,9 +2,12 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, s
 from flask_mysqldb import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
 from email_validator import validate_email, EmailNotValidError
+from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer
 
 import os
 import re
@@ -20,7 +23,48 @@ app.config['MYSQL_PASSWORD'] = os.getenv('DB_PASSWORD')
 app.config['MYSQL_DB'] = os.getenv('DB_NAME')
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'designora-secret-key')
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
+app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
+app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS') == 'True'
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
+
+mail = Mail(app)
+serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 mysql = MySQL(app)
+
+limiter = Limiter(
+    key_func=get_remote_address,
+    app=app,
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://"
+)
+
+oauth = OAuth(app)
+
+google = oauth.register(
+    name='google',
+    client_id=os.getenv('GOOGLE_CLIENT_ID'),
+    client_secret=os.getenv('GOOGLE_CLIENT_SECRET'),
+    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+    client_kwargs={
+        'scope': 'openid email profile'
+    }
+)
+
+facebook = oauth.register(
+    name='facebook',
+    client_id=os.getenv('FACEBOOK_CLIENT_ID'),
+    client_secret=os.getenv('FACEBOOK_CLIENT_SECRET'),
+    access_token_url='https://graph.facebook.com/oauth/access_token',
+    authorize_url='https://www.facebook.com/dialog/oauth',
+    api_base_url='https://graph.facebook.com/',
+    client_kwargs={'scope': 'email public_profile'},
+)
+
+
 def is_strong_password(password):
     if len(password) < 8:
         return False
@@ -32,23 +76,20 @@ def is_strong_password(password):
         return False
     return True
 
+
 def is_valid_name(name):
     return len(name.strip()) >= 3 and len(name.strip()) <= 100
+
 
 def is_safe_length(text, max_length):
     return len(text.strip()) <= max_length
 
-limiter = Limiter(
-    key_func=get_remote_address,
-    app=app,
-    default_limits=["200 per day", "50 per hour"],
-    storage_uri="memory://"
-)
-    
+
 # Splash page
 @app.route('/')
 def splash():
     return render_template('splash.html')
+
 
 # Home page after login
 @app.route('/home')
@@ -58,15 +99,125 @@ def home():
         return redirect(url_for('signin'))
     return render_template('index.html', user_name=session.get('user_name'))
 
+
 # Sign in page
 @app.route('/signin')
 def signin():
     return render_template('signin.html')
 
+
 # Sign up page
 @app.route('/signup')
 def signup():
     return render_template('signup.html')
+
+
+# GOOGLE LOGIN
+@app.route('/login/google')
+def login_google():
+    redirect_uri = url_for('google_callback', _external=True)
+    return google.authorize_redirect(redirect_uri)
+
+
+@app.route('/google/callback')
+def google_callback():
+    try:
+        token = google.authorize_access_token()
+        user_info = token.get('userinfo')
+
+        if not user_info:
+            resp = google.get('userinfo')
+            user_info = resp.json()
+
+        email = user_info.get('email')
+        name = user_info.get('name', 'Google User')
+        google_id = user_info.get('sub')
+
+        if not email:
+            flash('Google account email not available.', 'error')
+            return redirect(url_for('signin'))
+
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+        user = cur.fetchone()
+
+        if not user:
+            random_password = generate_password_hash(os.urandom(24).hex())
+            cur.execute(
+                "INSERT INTO users (full_name, email, password) VALUES (%s, %s, %s)",
+                (name, email, random_password)
+            )
+            mysql.connection.commit()
+
+            cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+            user = cur.fetchone()
+
+        cur.close()
+
+        session['user_id'] = user['id']
+        session['user_name'] = user['full_name']
+        session['user_email'] = user['email']
+        session['google_id'] = google_id
+
+        flash(f"Welcome {user['full_name']}!", 'success')
+        return redirect(url_for('home'))
+
+    except Exception as e:
+        flash(f'Google login failed: {str(e)}', 'error')
+        return redirect(url_for('signin'))
+
+
+# FACEBOOK LOGIN
+@app.route('/login/facebook')
+def login_facebook():
+    redirect_uri = url_for('facebook_callback', _external=True)
+    return facebook.authorize_redirect(redirect_uri)
+
+
+@app.route('/facebook/callback')
+def facebook_callback():
+    try:
+        token = facebook.authorize_access_token()
+        resp = facebook.get('me?fields=id,name,email', token=token)
+        profile = resp.json()
+
+        email = profile.get('email')
+        name = profile.get('name', 'Facebook User')
+        facebook_id = profile.get('id')
+
+        if not email:
+            flash('Facebook email permission not granted. Please use Google login or normal sign in.', 'error')
+            return redirect(url_for('signin'))
+
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+        user = cur.fetchone()
+
+        if not user:
+            random_password = generate_password_hash(os.urandom(24).hex())
+            cur.execute(
+                "INSERT INTO users (full_name, email, password) VALUES (%s, %s, %s)",
+                (name, email, random_password)
+            )
+            mysql.connection.commit()
+
+            cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+            user = cur.fetchone()
+
+        cur.close()
+
+        session['user_id'] = user['id']
+        session['user_name'] = user['full_name']
+        session['user_email'] = user['email']
+        session['facebook_id'] = facebook_id
+
+        flash(f"Welcome {user['full_name']}!", 'success')
+        return redirect(url_for('home'))
+
+    except Exception as e:
+        flash(f'Facebook login failed: {str(e)}', 'error')
+        return redirect(url_for('signin'))
+
 
 # REGISTER
 @limiter.limit("3 per minute")
@@ -124,6 +275,7 @@ def register():
     flash('Account created successfully. Please sign in.', 'success')
     return redirect(url_for('signin'))
 
+
 # LOGIN
 @limiter.limit("5 per minute")
 @app.route('/login', methods=['POST'])
@@ -150,13 +302,117 @@ def login():
     flash('Invalid email or password.', 'error')
     return redirect(url_for('signin'))
 
-# LOGOUT
 
+# LOGOUT
 @app.route('/logout')
 def logout():
     session.clear()
     flash('You have logged out successfully.', 'success')
     return redirect(url_for('splash'))
+
+
+# FORGOT PASSWORD
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+
+        if not email:
+            flash('Please enter your email address.', 'error')
+            return redirect(url_for('forgot_password'))
+
+        try:
+            validate_email(email)
+        except EmailNotValidError:
+            flash('Please enter a valid email address.', 'error')
+            return redirect(url_for('forgot_password'))
+
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+        user = cur.fetchone()
+        cur.close()
+
+        if user:
+            token = serializer.dumps(user['email'], salt='password-reset-salt')
+            reset_url = url_for('reset_password', token=token, _external=True)
+
+            msg = Message(
+                'Password Reset Request',
+                recipients=[user['email']]
+            )
+            msg.body = f"""Hello,
+
+Click the link below to reset your password:
+
+{reset_url}
+
+This link will expire in 1 hour.
+
+If you did not request this, please ignore this email.
+"""
+            mail.send(msg)
+
+            flash('Password reset link has been sent to your email.', 'success')
+            return redirect(url_for('signin'))
+        else:
+            flash('No account found with that email address.', 'error')
+            return redirect(url_for('forgot_password'))
+
+    return render_template('forgot_password.html')
+
+
+# RESET PASSWORD
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    try:
+        email = serializer.loads(token, salt='password-reset-salt', max_age=3600)
+    except Exception:
+        flash('The reset link is invalid or has expired.', 'error')
+        return redirect(url_for('forgot_password'))
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+    user = cur.fetchone()
+
+    if not user:
+        cur.close()
+        flash('User not found.', 'error')
+        return redirect(url_for('forgot_password'))
+
+    if request.method == 'POST':
+        new_password = request.form.get('password', '').strip()
+        confirm_password = request.form.get('confirm_password', '').strip()
+
+        if not new_password or not confirm_password:
+            cur.close()
+            flash('Please fill in all fields.', 'error')
+            return redirect(url_for('reset_password', token=token))
+
+        if new_password != confirm_password:
+            cur.close()
+            flash('Passwords do not match.', 'error')
+            return redirect(url_for('reset_password', token=token))
+
+        if not is_strong_password(new_password):
+            cur.close()
+            flash('Password must be at least 8 characters and include uppercase, lowercase, and a number.', 'error')
+            return redirect(url_for('reset_password', token=token))
+
+        hashed_password = generate_password_hash(new_password)
+
+        cur.execute(
+            "UPDATE users SET password = %s WHERE email = %s",
+            (hashed_password, email)
+        )
+        mysql.connection.commit()
+        cur.close()
+
+        flash('Your password has been reset successfully. Please sign in.', 'success')
+        return redirect(url_for('signin'))
+
+    cur.close()
+    return render_template('reset_password.html', token=token)
+
 
 # CONTACT FORM
 @limiter.limit("5 per minute")
@@ -196,6 +452,8 @@ def contact():
             "success": False,
             "message": f"Error: {str(e)}"
         })
+
+
 # START PROJECT / ORDER
 @app.route('/start-project', methods=['POST'])
 def start_project():
@@ -236,9 +494,12 @@ def start_project():
 
     flash('Your project order has been submitted successfully.', 'success')
     return redirect(url_for('home'))
+
+
 @app.errorhandler(429)
 def ratelimit_handler(e):
-    return "Too many login attempts. Please try again later.", 429
+    return "Too many attempts. Please try again later.", 429
+
 
 # RUN APP
 if __name__ == '__main__':
