@@ -17,11 +17,14 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.environ.get('SESSION_SECRET', 'designora-secret-key')
 
+# DATABASE CONFIG
 app.config['MYSQL_HOST'] = os.getenv('DB_HOST')
 app.config['MYSQL_USER'] = os.getenv('DB_USER')
 app.config['MYSQL_PASSWORD'] = os.getenv('DB_PASSWORD')
 app.config['MYSQL_DB'] = os.getenv('DB_NAME')
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+
+# APP / MAIL CONFIG
 
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'designora-secret-key')
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
@@ -44,6 +47,7 @@ limiter = Limiter(
 
 oauth = OAuth(app)
 
+# GOOGLE OAUTH
 google = oauth.register(
     name='google',
     client_id=os.getenv('GOOGLE_CLIENT_ID'),
@@ -54,6 +58,7 @@ google = oauth.register(
     }
 )
 
+# FACEBOOK OAUTH
 facebook = oauth.register(
     name='facebook',
     client_id=os.getenv('FACEBOOK_CLIENT_ID'),
@@ -64,7 +69,7 @@ facebook = oauth.register(
     client_kwargs={'scope': 'email public_profile'},
 )
 
-
+# HELPERS
 def is_strong_password(password):
     if len(password) < 8:
         return False
@@ -84,6 +89,7 @@ def is_valid_name(name):
 def is_safe_length(text, max_length):
     return len(text.strip()) <= max_length
 
+# ROUTES
 
 # Splash page
 @app.route('/')
@@ -167,7 +173,9 @@ def google_callback():
         return redirect(url_for('signin'))
 
 
+
 # FACEBOOK LOGIN
+
 @app.route('/login/facebook')
 def login_facebook():
     redirect_uri = url_for('facebook_callback', _external=True)
@@ -275,8 +283,8 @@ def register():
     flash('Account created successfully. Please sign in.', 'success')
     return redirect(url_for('signin'))
 
-
 # LOGIN
+
 @limiter.limit("5 per minute")
 @app.route('/login', methods=['POST'])
 def login():
@@ -304,6 +312,7 @@ def login():
 
 
 # LOGOUT
+
 @app.route('/logout')
 def logout():
     session.clear()
@@ -419,17 +428,25 @@ def reset_password(token):
 @app.route('/contact', methods=['POST'])
 def contact():
     try:
-        name = request.form.get('name')
-        email = request.form.get('email')
-        company = request.form.get('company')
-        contact_number = request.form.get('contact_number')
-        service_type = request.form.get('service_type')
-        message = request.form.get('message')
+        name = request.form.get('name', '').strip()
+        email = request.form.get('email', '').strip()
+        company = request.form.get('company', '').strip()
+        contact_number = request.form.get('contact_number', '').strip()
+        service_type = request.form.get('service_type', '').strip()
+        message = request.form.get('message', '').strip()
 
         if not name or not email or not message:
             return jsonify({
                 "success": False,
                 "message": "Please fill in all required fields."
+            })
+
+        try:
+            validate_email(email)
+        except EmailNotValidError:
+            return jsonify({
+                "success": False,
+                "message": "Please enter a valid email address."
             })
 
         cur = mysql.connection.cursor()
@@ -438,9 +455,55 @@ def contact():
             (name, email, company, contact_number, service_type, message)
             VALUES (%s, %s, %s, %s, %s, %s)
         """, (name, email, company, contact_number, service_type, message))
-
         mysql.connection.commit()
         cur.close()
+
+        owner_email = "designoraallcoluds@gmail.com"
+
+        owner_msg = Message(
+            subject="New Contact Inquiry - Designora",
+            recipients=[owner_email]
+        )
+        owner_msg.body = f"""
+New contact inquiry received from Designora website.
+
+Name: {name}
+Email: {email}
+Company: {company if company else 'N/A'}
+Contact Number: {contact_number if contact_number else 'N/A'}
+Service Type: {service_type if service_type else 'N/A'}
+
+Message:
+{message}
+"""
+        mail.send(owner_msg)
+
+        user_msg = Message(
+            subject="We Received Your Message - Designora",
+            recipients=[email]
+        )
+        user_msg.body = f"""
+Hello {name},
+
+Thank you for contacting Designora.
+
+We have received your message successfully.
+Our team will get back to you soon.
+
+Submitted details:
+Name: {name}
+Email: {email}
+Company: {company if company else 'N/A'}
+Contact Number: {contact_number if contact_number else 'N/A'}
+Service Type: {service_type if service_type else 'N/A'}
+
+Message:
+{message}
+
+Best regards,
+Designora Team
+"""
+        mail.send(user_msg)
 
         return jsonify({
             "success": True,
@@ -492,16 +555,65 @@ def start_project():
     mysql.connection.commit()
     cur.close()
 
+    owner_email = "designoraallcoluds@gmail.com"
+
+    try:
+        owner_msg = Message(
+            subject="New Start Project Submission - Designora",
+            recipients=[owner_email]
+        )
+        owner_msg.body = f"""
+A new project order has been submitted on Designora website.
+
+User ID: {session.get('user_id')}
+Full Name: {full_name}
+Email: {email}
+Service Type: {service_type}
+Budget: {budget if budget else 'N/A'}
+
+Project Details:
+{project_details}
+"""
+        mail.send(owner_msg)
+
+        user_msg = Message(
+            subject="Your Project Request Was Received - Designora",
+            recipients=[email]
+        )
+        user_msg.body = f"""
+Hello {full_name},
+
+Thank you for starting your project with Designora.
+
+We have received your project request successfully.
+Our team will review your requirements and contact you soon.
+
+Submitted details:
+Full Name: {full_name}
+Email: {email}
+Service Type: {service_type}
+Budget: {budget if budget else 'N/A'}
+
+Project Details:
+{project_details}
+
+Best regards,
+Designora Team
+"""
+        mail.send(user_msg)
+
+    except Exception as e:
+        print("Email sending error:", str(e))
+
     flash('Your project order has been submitted successfully.', 'success')
     return redirect(url_for('home'))
 
-
+# RATE LIMIT ERROR
 @app.errorhandler(429)
 def ratelimit_handler(e):
     return "Too many attempts. Please try again later.", 429
 
-
 # RUN APP
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
