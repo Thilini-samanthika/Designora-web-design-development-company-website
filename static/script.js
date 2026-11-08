@@ -220,7 +220,8 @@ if (contactForm) {
         e.preventDefault();
 
         const formData = new FormData(contactForm);
-
+        formMessage.hidden = false;
+        formMessage.style.display = "block";
         formMessage.textContent = "Sending...";
         formMessage.style.color = "#facc15";
 

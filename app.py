@@ -8,6 +8,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
+import requests
 
 import os
 import re
@@ -19,6 +20,7 @@ app.secret_key = os.environ.get('SESSION_SECRET', 'designora-secret-key')
 
 # DATABASE CONFIG
 app.config['MYSQL_HOST'] = os.getenv('DB_HOST')
+app.config['MYSQL_PORT'] = int(os.getenv('DB_PORT', '3306'))
 app.config['MYSQL_USER'] = os.getenv('DB_USER')
 app.config['MYSQL_PASSWORD'] = os.getenv('DB_PASSWORD')
 app.config['MYSQL_DB'] = os.getenv('DB_NAME')
@@ -422,7 +424,28 @@ def reset_password(token):
     cur.close()
     return render_template('reset_password.html', token=token)
 
+def send_contact_email(message, reply_to=None):
+    payload = {
+        "from": os.environ["RESEND_FROM"],
+        "to": message.recipients,
+        "subject": message.subject,
+        "text": message.body,
+    }
 
+    if reply_to:
+        payload["reply_to"] = reply_to
+
+    response = requests.post(
+        "https://api.resend.com/emails",
+        headers={"Authorization": f"Bearer {os.environ['RESEND_API_KEY']}"},
+        json=payload,
+        timeout=15,
+    )
+
+    if not response.ok:
+        app.logger.error("Resend request failed with HTTP %s", response.status_code)
+        raise RuntimeError("Inquiry saved, but the email could not be sent.")
+    
 # CONTACT FORM
 @limiter.limit("5 per minute")
 @app.route('/contact', methods=['POST'])
@@ -457,8 +480,7 @@ def contact():
         """, (name, email, company, contact_number, service_type, message))
         mysql.connection.commit()
         cur.close()
-
-        owner_email = "designoraallcoluds@gmail.com"
+        owner_email = os.environ["CONTACT_OWNER_EMAIL"]
 
         owner_msg = Message(
             subject="New Contact Inquiry - Designora",
@@ -476,7 +498,7 @@ Service Type: {service_type if service_type else 'N/A'}
 Message:
 {message}
 """
-        mail.send(owner_msg)
+        send_contact_email(owner_msg, reply_to=email)
 
         user_msg = Message(
             subject="We Received Your Message - Designora",
@@ -503,7 +525,7 @@ Message:
 Best regards,
 Designora Team
 """
-        mail.send(user_msg)
+       # mail.send(user_msg)
 
         return jsonify({
             "success": True,

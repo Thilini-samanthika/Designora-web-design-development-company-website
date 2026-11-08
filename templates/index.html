@@ -1,573 +1,1099 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Designora - Premium Web Design & Development Company. We build powerful websites and digital solutions for businesses.">
+
+    <meta name="description" content="Designora - Premium Web Design &amp; Development Company. We build powerful websites and digital solutions for businesses.">
+
     <meta name="keywords" content="web design, website development, digital solutions, UI/UX design, e-commerce">
-    <title>Designora | Web Design & Development Company</title>
+
+    <title>Designora | Web Design &amp; Development Company</title>
 
     <link rel="stylesheet" href="/static/style.css">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
+
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        #about .about-content {
+            grid-column: 1 / -1;
+            justify-self: center;
+            width: 100%;
+            max-width: 760px;
+            text-align: center;
+        }
+
+        #about .about-feature {
+            justify-content: center;
+        }
+
+        #about .about-stats {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            #about .about-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
 </head>
+
 <body>
 
     <!-- NAVBAR -->
+
     <nav class="navbar" id="navbar">
+
         <div class="nav-container">
+
             <a href="#home" class="nav-logo">
+
                 <span class="logo-text">Designora</span>
+
             </a>
 
             <ul class="nav-menu" id="nav-menu">
+
                 <li><a href="#home" class="nav-link active">Home</a></li>
+
                 <li><a href="#about" class="nav-link">About</a></li>
+
                 <li><a href="#services" class="nav-link">Services</a></li>
-                <li><a href="#portfolio" class="nav-link">Portfolio</a></li>
+
+                <li><a href="#portfolio" class="nav-link">Experience</a></li>
+
                 <li><a href="#team" class="nav-link">Team</a></li>
+
                 <li><a href="#testimonials" class="nav-link">Testimonials</a></li>
+
                 <li><a href="#contact" class="nav-link">Contact</a></li>
+
                 <li><a href="{{ url_for('logout') }}" class="nav-link">Logout</a></li>
+
             </ul>
 
             <a href="#contact" class="nav-cta">Start a Project</a>
 
             <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+
                 <span class="bar"></span>
+
                 <span class="bar"></span>
+
                 <span class="bar"></span>
+
             </button>
+
         </div>
+
     </nav>
 
     <!-- HERO -->
+
     <section class="hero" id="home">
+
         <div class="hero-bg-effects">
+
             <div class="hero-glow hero-glow-1"></div>
+
             <div class="hero-glow hero-glow-2"></div>
+
             <div class="hero-glow hero-glow-3"></div>
+
             <div class="hero-grid"></div>
+
         </div>
 
         <div class="container hero-content hero-split">
+
             <!-- LEFT VIDEO -->
+
             <div class="hero-video-side reveal">
+
                 <div class="hero-video-glass">
+
                     <div class="glass-orb glass-orb-1"></div>
+
                     <div class="glass-orb glass-orb-2"></div>
 
                     <video autoplay muted loop playsinline controls poster="/static/images/video-cover.jpg">
+
                         <source src="/static/videos/logo-video.mp4" type="video/mp4">
+
                         Your browser does not support the video tag.
+
                     </video>
+
                 </div>
+
             </div>
 
             <!-- RIGHT TEXT -->
+
             <div class="hero-text-side reveal delay-1">
+
                 <div class="hero-badge">
+
                     <span class="badge-dot"></span>
-                    Web Design & Digital Solutions
+
+                    Web Design &amp; Digital Solutions
+
                 </div>
 
                 <h1 class="hero-title">
-                    We Design & Build<br>
+
+                    We Design &amp; Build<br>
+
                     <span class="gradient-text">Powerful Websites</span>
+
                 </h1>
 
                 <p class="hero-subtitle">
+
                     Designora helps businesses grow with modern website development, creative design, and digital solutions.
+
                 </p>
 
                 <div class="hero-buttons">
+
                     <a href="#contact" class="btn btn-primary">
+
                         Start a Project
+
                         <i class="fas fa-arrow-right"></i>
+
                     </a>
 
+                    <!-- Replace #portfolio with your live portfolio URL to open the external site. -->
                     <a href="#portfolio" class="btn btn-outline">
+
                         View Portfolio
+
                         <i class="fas fa-eye"></i>
+
                     </a>
+
                 </div>
 
                 <div class="hero-stats-row">
+
                     <div class="hero-stat">
-                        <span class="hero-stat-number">50+</span>
-                        <span class="hero-stat-label">Projects</span>
+
+                        <span class="hero-stat-number">50 +</span>
+
+                        <span class="hero-stat-label">Featured Projects</span>
+
                     </div>
+
                     <div class="hero-stat-divider"></div>
+
                     <div class="hero-stat">
-                        <span class="hero-stat-number">20+</span>
-                        <span class="hero-stat-label">Clients</span>
+
+                        <span class="hero-stat-number">Design</span>
+
+                        <span class="hero-stat-label">UI/UX &amp; Branding</span>
+
                     </div>
+
                     <div class="hero-stat-divider"></div>
+
                     <div class="hero-stat">
-                        <span class="hero-stat-number">5+</span>
-                        <span class="hero-stat-label">Years</span>
+
+                        <span class="hero-stat-number">Build</span>
+
+                        <span class="hero-stat-label">Web &amp; Apps</span>
+
                     </div>
+
                 </div>
+
             </div>
+
         </div>
+
     </section>
 
     <!-- ABOUT -->
+
     <section class="about section" id="about">
+
         <div class="container">
+
             <div class="section-header reveal">
+
                 <span class="section-tag">About Us</span>
-                <h2 class="section-title">We Craft Digital <span class="gradient-text">Experiences</span></h2>
-                <p class="section-subtitle">At Designora, we blend creativity with technology to deliver exceptional digital products that drive results.</p>
+
+                <h2 class="section-title">Meet the Team <span class="gradient-text">Behind Designora</span></h2>
+
+                <p class="section-subtitle">We are a startup team that designs and builds websites, web apps, and digital brands.</p>
+
             </div>
 
             <div class="about-grid">
+
                 <div class="about-content reveal">
-                    <p>We are a team of passionate designers and developers dedicated to creating stunning, high-performance websites and digital solutions. Our approach combines strategic thinking with cutting-edge design to deliver results that exceed expectations.</p>
-                    <p>From startups to established enterprises, we partner with businesses to transform their digital presence and drive meaningful growth through innovative web solutions.</p>
+
+                    <p>Our team brings together design and software development. We start by understanding what your users need, then turn that into a clear design and a product that works across devices.</p>
+
+                    <p>Explore our featured projects to see how we have applied these skills in recruitment, education, and AI-assisted tools.</p>
 
                     <div class="about-features">
+
                         <div class="about-feature">
+
                             <i class="fas fa-check-circle"></i>
+
                             <span>Custom Web Solutions</span>
+
                         </div>
+
                         <div class="about-feature">
+
                             <i class="fas fa-check-circle"></i>
+
                             <span>User-Centered Design</span>
+
                         </div>
+
                         <div class="about-feature">
+
                             <i class="fas fa-check-circle"></i>
+
                             <span>Scalable Architecture</span>
+
                         </div>
+
                         <div class="about-feature">
+
                             <i class="fas fa-check-circle"></i>
+
                             <span>Ongoing Support</span>
+
                         </div>
+
                     </div>
+
                 </div>
 
                 <div class="about-stats reveal delay-1">
+
                     <div class="stat-card">
+
                         <div class="stat-icon"><i class="fas fa-project-diagram"></i></div>
-                        <h3 class="stat-number">50+</h3>
-                        <p class="stat-label">Projects Completed</p>
+
+                        <h3 class="stat-number">50 +</h3>
+
+                        <p class="stat-label">Featured Projects</p>
+
                     </div>
+
                     <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-smile"></i></div>
-                        <h3 class="stat-number">20+</h3>
-                        <p class="stat-label">Happy Clients</p>
+
+                        <div class="stat-icon"><i class="fas fa-pen-nib"></i></div>
+
+                        <h3 class="stat-number">Design</h3>
+
+                        <p class="stat-label">UI/UX &amp; Branding</p>
+
                     </div>
+
                     <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
-                        <h3 class="stat-number">5+</h3>
-                        <p class="stat-label">Years Experience</p>
+
+                        <div class="stat-icon"><i class="fas fa-code"></i></div>
+
+                        <h3 class="stat-number">Build</h3>
+
+                        <p class="stat-label">Web &amp; Apps</p>
+
                     </div>
+
                 </div>
+
             </div>
+
         </div>
+
     </section>
 
     <!-- SERVICES -->
+
     <section class="services section" id="services">
+
         <div class="container">
+
             <div class="section-header reveal">
+
                 <span class="section-tag">Our Services</span>
+
                 <h2 class="section-title">What We <span class="gradient-text">Offer</span></h2>
+
                 <p class="section-subtitle">We provide comprehensive digital solutions to help your business thrive in the digital landscape.</p>
+
             </div>
 
             <div class="services-grid">
+
                 <div class="service-card reveal">
+
                     <div class="service-icon"><i class="fas fa-code"></i></div>
+
                     <h3 class="service-title">Website Development</h3>
+
                     <p class="service-desc">Custom-built, high-performance websites using the latest technologies tailored to your business needs.</p>
+
                 </div>
 
                 <div class="service-card reveal delay-1">
+
                     <div class="service-icon"><i class="fas fa-palette"></i></div>
+
                     <h3 class="service-title">UI/UX Design</h3>
+
                     <p class="service-desc">Intuitive and visually stunning interfaces designed to engage users and enhance their experience.</p>
+
                 </div>
 
                 <div class="service-card reveal delay-2">
+
                     <div class="service-icon"><i class="fas fa-shopping-cart"></i></div>
+
                     <h3 class="service-title">E-commerce Development</h3>
+
                     <p class="service-desc">Scalable online stores with secure payment integration and seamless shopping experiences.</p>
+
                 </div>
 
                 <div class="service-card reveal">
+
                     <div class="service-icon"><i class="fas fa-laptop-code"></i></div>
+
                     <h3 class="service-title">Web Applications</h3>
+
                     <p class="service-desc">Powerful web applications built with modern frameworks for complex business requirements.</p>
+
                 </div>
 
                 <div class="service-card reveal delay-1">
+
                     <div class="service-icon"><i class="fas fa-search"></i></div>
+
                     <h3 class="service-title">SEO Optimization</h3>
+
                     <p class="service-desc">Data-driven SEO strategies to improve your search rankings and drive organic traffic.</p>
+
                 </div>
 
                 <div class="service-card reveal delay-2">
+
                     <div class="service-icon"><i class="fas fa-tools"></i></div>
+
                     <h3 class="service-title">Website Maintenance</h3>
+
                     <p class="service-desc">Reliable ongoing maintenance and support to keep your website secure and up-to-date.</p>
+
                 </div>
+
             </div>
+
         </div>
+
     </section>
 
     <!-- PORTFOLIO -->
+
     <section class="portfolio section" id="portfolio">
+
         <div class="container">
-            <div class="section-header reveal">
+
+            <div class="section-header">
+
                 <span class="section-tag">Our Work</span>
+
                 <h2 class="section-title">Featured <span class="gradient-text">Projects</span></h2>
-                <p class="section-subtitle">Explore our recent projects and see how we've helped businesses transform their digital presence.</p>
+
+                <p class="section-subtitle">Explore our software projects across AI, education, and app development.</p>
+
             </div>
 
             <div class="portfolio-grid">
-                <div class="portfolio-card reveal">
+
+                <div class="portfolio-card">
+
                     <div class="portfolio-image">
-                        <div class="portfolio-placeholder"><i class="fas fa-store"></i></div>
-                        <div class="portfolio-overlay"><a href="#" class="portfolio-link">View Project <i class="fas fa-arrow-right"></i></a></div>
+
+                        <img src="{{ url_for('static', filename='images/projects/ai-recruitment.png') }}" alt="" width="1672" height="941" loading="lazy" style="display:block; width:100%; height:100%; object-fit:cover;">
+
+
+                    </div>
+
+                    <div class="portfolio-info">
+
+                        <span class="portfolio-category">AI &amp; Microservices</span>
+
+                        <h3 class="portfolio-title">AI Recruitment Platform</h3>
+
+                        <p class="portfolio-desc">A team-built recruitment platform with separate services for candidates, companies, and job listings. My contributions included the API gateway, JWT authentication, and service integration.</p>
+                        <a href="https://github.com/Thilini-samanthika/AI-Recruitment-Platform" class="btn btn-outline" target="_blank" rel="noopener noreferrer">View on GitHub <i class="fas fa-arrow-right"></i></a>
+
+                    </div>
+
+                </div>
+
+                <div class="portfolio-card">
+
+                    <div class="portfolio-image">
+
+                        <img src="{{ url_for('static', filename='images/projects/movie-recommendation.png') }}" alt="" width="1672" height="941" loading="lazy" style="display:block; width:100%; height:100%; object-fit:cover;">
+
+
+                    </div>
+
+                    <div class="portfolio-info">
+
+                        <span class="portfolio-category">Recommendation System</span>
+
+                        <h3 class="portfolio-title">Movie Recommendation AI</h3>
+
+                        <p class="portfolio-desc">A movie recommendation app built with React, Spring Boot, FastAPI, and MySQL using MovieLens data.</p>
+                        <a href="https://github.com/Thilini-samanthika/Movie-recommendation-ai" class="btn btn-outline" target="_blank" rel="noopener noreferrer">View on GitHub <i class="fas fa-arrow-right"></i></a>
+
+                    </div>
+
+                </div>
+
+                <div class="portfolio-card">
+
+                    <div class="portfolio-image">
+
+                        <img src="{{ url_for('static', filename='images/projects/ai-software-assistant.png') }}" alt="" width="1672" height="941" loading="lazy" style="display:block; width:100%; height:100%; object-fit:cover;">
+
+
+                    </div>
+
+                    <div class="portfolio-info">
+
+                        <span class="portfolio-category">Generative AI</span>
+
+                        <h3 class="portfolio-title">AI Software Engineering Assistant</h3>
+
+                        <p class="portfolio-desc">A Streamlit assistant that answers software engineering questions using retrieval-augmented generation and uploaded PDFs.</p>
+                        <a href="https://github.com/Thilini-samanthika/AI-Software-Engineering-Assistant" class="btn btn-outline" target="_blank" rel="noopener noreferrer">View on GitHub <i class="fas fa-arrow-right"></i></a>
+
+                    </div>
+
+                </div>
+
+                <div class="portfolio-card">
+                    <div class="portfolio-image">
+                        <img src="{{ url_for('static', filename='images/projects/qa-ai-assistant.png') }}" alt="" width="1672" height="941" loading="lazy" style="display:block; width:100%; height:100%; object-fit:cover;">
                     </div>
                     <div class="portfolio-info">
-                        <span class="portfolio-category">E-commerce</span>
-                        <h3 class="portfolio-title">LuxeStore Online Shop</h3>
-                        <p class="portfolio-desc">A premium e-commerce platform with seamless checkout and inventory management.</p>
+                        <span class="portfolio-category">Quality Assurance</span>
+                        <h3 class="portfolio-title">QA AI Assistant</h3>
+                        <p class="portfolio-desc">An AI assistant for software quality assurance.</p>
+                        <a href="https://github.com/hashinikushalya/QA-AI-Assistant" class="btn btn-outline" target="_blank" rel="noopener noreferrer">View on GitHub <i class="fas fa-arrow-right"></i></a>
                     </div>
                 </div>
 
-                <div class="portfolio-card reveal delay-1">
+                <div class="portfolio-card">
                     <div class="portfolio-image">
-                        <div class="portfolio-placeholder"><i class="fas fa-building"></i></div>
-                        <div class="portfolio-overlay"><a href="#" class="portfolio-link">View Project <i class="fas fa-arrow-right"></i></a></div>
+                        <img src="{{ url_for('static', filename='images/projects/aqua-guardian.png') }}" alt="" width="1672" height="941" loading="lazy" style="display:block; width:100%; height:100%; object-fit:cover;">
                     </div>
                     <div class="portfolio-info">
-                        <span class="portfolio-category">Corporate</span>
-                        <h3 class="portfolio-title">FinanceHub Dashboard</h3>
-                        <p class="portfolio-desc">A modern financial dashboard with real-time analytics and data visualization.</p>
+                        <span class="portfolio-category">App Development</span>
+                        <h3 class="portfolio-title">Aqua Guardian App</h3>
+                        <p class="portfolio-desc">Explore the Aqua Guardian application and its source code.</p>
+                        <a href="https://github.com/BinukaJayakody/Aqua_guardian_App" class="btn btn-outline" target="_blank" rel="noopener noreferrer">View on GitHub <i class="fas fa-arrow-right"></i></a>
                     </div>
                 </div>
 
-                <div class="portfolio-card reveal delay-2">
+                <div class="portfolio-card">
                     <div class="portfolio-image">
-                        <div class="portfolio-placeholder"><i class="fas fa-heartbeat"></i></div>
-                        <div class="portfolio-overlay"><a href="#" class="portfolio-link">View Project <i class="fas fa-arrow-right"></i></a></div>
+                        <img src="{{ url_for('static', filename='images/projects/online-exam-system.png') }}" alt="" width="1672" height="941" loading="lazy" style="display:block; width:100%; height:100%; object-fit:cover;">
                     </div>
                     <div class="portfolio-info">
-                        <span class="portfolio-category">Healthcare</span>
-                        <h3 class="portfolio-title">MediCare Portal</h3>
-                        <p class="portfolio-desc">A patient management system with appointment scheduling and health records.</p>
+                        <span class="portfolio-category">Education</span>
+                        <h3 class="portfolio-title">Online Exam System</h3>
+                        <p class="portfolio-desc">A software project for conducting exams online.</p>
+                        <a href="https://github.com/BinukaJayakody/OnlineExamSystem" class="btn btn-outline" target="_blank" rel="noopener noreferrer">View on GitHub <i class="fas fa-arrow-right"></i></a>
                     </div>
                 </div>
+
+                <div class="portfolio-card">
+                    <div class="portfolio-image">
+                        <img src="{{ url_for('static', filename='images/projects/student-results.png') }}" alt="" width="1672" height="941" loading="lazy" style="display:block; width:100%; height:100%; object-fit:cover;">
+                    </div>
+                    <div class="portfolio-info">
+                        <span class="portfolio-category">Education</span>
+                        <h3 class="portfolio-title">Student Result Management System</h3>
+                        <p class="portfolio-desc">A system for managing student examination results.</p>
+                        <a href="https://github.com/Shenal1218/Student-Result-Management-System" class="btn btn-outline" target="_blank" rel="noopener noreferrer">View on GitHub <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="portfolio-card">
+                    <div class="portfolio-image">
+                        <img src="{{ url_for('static', filename='images/projects/findesign-ai.png') }}" alt="" width="1672" height="941" loading="lazy" style="display:block; width:100%; height:100%; object-fit:cover;">
+                    </div>
+                    <div class="portfolio-info">
+                        <span class="portfolio-category">Generative AI</span>
+                        <h3 class="portfolio-title">FinDesign AI Assistant</h3>
+                        <p class="portfolio-desc">An AI assistant for banking campaign ideas and visual content planning.</p>
+                        <a href="https://github.com/harshanimedhavi-create/FinDesign-AI-assitant" class="btn btn-outline" target="_blank" rel="noopener noreferrer">View on GitHub <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
             </div>
+
         </div>
+
     </section>
 
     <!-- TEAM -->
+
     <section class="team section" id="team">
+
         <div class="container">
+
             <div class="section-header reveal">
+
                 <span class="section-tag">Our Team</span>
+
                 <h2 class="section-title">Meet Our <span class="gradient-text">Creative Team</span></h2>
+
                 <p class="section-subtitle">The talented people behind Designora who bring ideas to life with creativity, strategy, and technology.</p>
+
             </div>
 
             <div class="team-carousel-wrap reveal">
+
                 <button class="team-nav team-prev" id="teamPrev" aria-label="Previous">
+
                     <i class="fas fa-chevron-left"></i>
+
                 </button>
 
                 <div class="team-carousel" id="teamCarousel">
+
                     <div class="team-track" id="teamTrack">
 
                        <div class="team-card founder-card">
+
                            <div class="founder-badge">Founder</div>
 
                                  <div class="team-image">
+
                                  <img src="/static/images/team/member 1.png" alt="Chamuthu Sanahas">
+
                                 </div>
 
                                  <h3 class="team-name">Chamuthu Sanahas</h3>
-                                 <p class="team-role">Founder & Head of Marketing</p>
+
+                                 <p class="team-role">Founder &amp; Head of Marketing</p>
+
                                 </div>
 
                         <div class="team-card">
+
                             <div class="team-image">
-                                <img src="/static/images/team/member2.jpeg" alt="Team Member 2">
+
+                                <img src="/static/images/team/member 2.png" alt="Team Member 2">
+
                             </div>
+
                             <h3 class="team-name">Thilini Samanthika</h3>
-                            <p class="team-role">Technical Lead & Project Manager</p>
+
+                            <p class="team-role">Technical Lead &amp; Project Manager</p>
+
                         </div>
 
                         <div class="team-card">
+
                             <div class="team-image">
-                                <img src="/static/images/team/member3.jpeg" alt="Team Member 3">
+
+                                <img src="/static/images/team/member3.png" alt="Team Member 3">
+
                             </div>
+
                             <h3 class="team-name">Hashini Kaushalya</h3>
+
                             <p class="team-role">Frontend Developer</p>
+
                         </div>
 
                         <div class="team-card">
+
                             <div class="team-image">
+
                                 <img src="/static/images/team/member4.png" alt="Team Member 4">
+
                             </div>
+
                             <h3 class="team-name">Harshani Medhavi</h3>
+
                             <p class="team-role">QA Engineer</p>
+
                         </div>
 
                         <div class="team-card">
+
                             <div class="team-image">
+
                                 <img src="/static/images/team/member5.jpeg" alt="Team Member 5">
+
                             </div>
+
                             <h3 class="team-name">Sangeeth Weerasingha</h3>
+
                             <p class="team-role">Business Analyst</p>
+
                         </div>
 
                         <div class="team-card">
+
                             <div class="team-image">
+
                                 <img src="/static/images/team/member6.png" alt="Team Member 6">
+
                             </div>
+
                             <h3 class="team-name">Binuka Jayakody</h3>
+
                             <p class="team-role">Database Administrator</p>
+
                         </div>
 
                         <div class="team-card">
+
                             <div class="team-image">
+
                                 <img src="/static/images/team/member7.jpeg" alt="Team Member 7">
+
                             </div>
+
                             <h3 class="team-name">Sandaru Induwara</h3>
-                            <p class="team-role">Security Analyst & Tester</p>
+
+                            <p class="team-role">Security Analyst &amp; Tester</p>
+
                         </div>
 
                         <div class="team-card">
+
                             <div class="team-image">
+
                                 <img src="/static/images/team/member8.jpeg" alt="Team Member 8">
+
                             </div>
+
                             <h3 class="team-name">Shenal Perera</h3>
+
                             <p class="team-role">DevOps Engineer</p>
+
                         </div>
 
                     </div>
+
                 </div>
 
                 <button class="team-nav team-next" id="teamNext" aria-label="Next">
+
                     <i class="fas fa-chevron-right"></i>
+
                 </button>
+
             </div>
 
             <div class="team-dots" id="teamDots"></div>
+
         </div>
+
     </section>
 
     <!-- TESTIMONIALS -->
+
     <section class="testimonials section" id="testimonials">
+
         <div class="container">
+
             <div class="section-header reveal">
+
                 <span class="section-tag">Testimonials</span>
+
                 <h2 class="section-title">What Clients <span class="gradient-text">Say</span></h2>
+
                 <p class="section-subtitle">Hear from the businesses we've helped succeed in the digital world.</p>
+
             </div>
 
             <div class="testimonials-grid">
+
                 <div class="testimonial-card reveal">
+
                     <div class="testimonial-stars">
+
                         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+
                     </div>
+
                     <p class="testimonial-text">"Designora transformed our online presence completely. The website they built exceeded all our expectations."</p>
+
                     <div class="testimonial-author">
+
                         <div class="author-avatar"><i class="fas fa-user"></i></div>
+
                         <div class="author-info">
+
                             <h4 class="author-name">Sarah Mitchell</h4>
+
                             <p class="author-role">CEO, TechVista Inc.</p>
+
                         </div>
+
                     </div>
+
                 </div>
 
                 <div class="testimonial-card featured reveal delay-1">
+
                     <div class="testimonial-stars">
+
                         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+
                     </div>
+
                     <p class="testimonial-text">"They delivered a stunning e-commerce platform that boosted our sales by 200%. Their team is incredibly talented."</p>
+
                     <div class="testimonial-author">
+
                         <div class="author-avatar"><i class="fas fa-user"></i></div>
+
                         <div class="author-info">
+
                             <h4 class="author-name">James Rodriguez</h4>
+
                             <p class="author-role">Founder, LuxeStyle</p>
+
                         </div>
+
                     </div>
+
                 </div>
 
                 <div class="testimonial-card reveal delay-2">
+
                     <div class="testimonial-stars">
+
                         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+
                     </div>
+
                     <p class="testimonial-text">"Their technical expertise combined with beautiful design made all the difference for our business."</p>
+
                     <div class="testimonial-author">
+
                         <div class="author-avatar"><i class="fas fa-user"></i></div>
+
                         <div class="author-info">
+
                             <h4 class="author-name">Emily Chen</h4>
+
                             <p class="author-role">Director, CloudSync Solutions</p>
+
                         </div>
+
                     </div>
+
                 </div>
+
             </div>
+
         </div>
+
     </section>
 
     <!-- CTA -->
+
     <section class="cta-section section">
+
         <div class="container">
+
             <div class="cta-content reveal">
+
                 <div class="cta-glow"></div>
+
                 <h2 class="cta-title">Ready to Build Your<br><span class="gradient-text">Dream Website?</span></h2>
+
                 <p class="cta-subtitle">Let's collaborate and create something extraordinary together. Your vision, our expertise.</p>
+
                 <div class="cta-buttons">
+
                     <a href="#contact" class="btn btn-primary btn-lg">
+
                         Start Your Project
+
                         <i class="fas fa-arrow-right"></i>
+
                     </a>
+
                     <a href="#contact" class="btn btn-outline btn-lg">
+
                         Contact Us
+
                         <i class="fas fa-envelope"></i>
+
                     </a>
+
                 </div>
+
             </div>
+
         </div>
+
     </section>
 
     <!-- CONTACT -->
+
     <section class="contact section" id="contact">
+
         <div class="container">
+
             <div class="section-header reveal">
+
                 <span class="section-tag">Get in Touch</span>
+
                 <h2 class="section-title">Let's Start a <span class="gradient-text">Conversation</span></h2>
+
                 <p class="section-subtitle">Have a project in mind? Fill out the form and we'll get back to you within 24 hours.</p>
+
             </div>
 
             <div class="contact-grid">
+
                 <div class="contact-info-cards reveal">
+
                     <div class="contact-info-card">
+
                         <div class="contact-info-icon"><i class="fas fa-envelope"></i></div>
+
                         <h4>Email Us</h4>
+
                         <p>designoraallclouds@gmail.com</p>
+
                     </div>
+
                     <div class="contact-info-card">
+
                         <div class="contact-info-icon"><i class="fas fa-phone"></i></div>
+
                         <h4>Call Us</h4>
+
                         <p>0766848345</p>
+
                     </div>
+
                     <div class="contact-info-card">
+
                         <div class="contact-info-icon"><i class="fas fa-map-marker-alt"></i></div>
+
                         <h4>Visit Us</h4>
+
                         <p>all cloud.lk</p>
+
                     </div>
+
                 </div>
 
                 <form class="contact-form reveal delay-1" id="contact-form" action="/contact" method="POST">
+
     <div class="form-group">
+
         <input type="text" id="name" name="name" placeholder="Your Name" required>
+
     </div>
 
     <div class="form-group">
+
         <input type="email" id="email" name="email" placeholder="Your Email" required>
+
     </div>
 
     <div class="form-group">
+
         <input type="text" id="company" name="company" placeholder="Company Name">
+
     </div>
 
     <div class="form-group">
+
         <input type="text" id="contact-company" name="contact_number" placeholder="Company contact number">
+
     </div>
 
     <div class="form-group">
+
         <input type="text" id="service-type" name="service_type" placeholder="Service Type">
+
     </div>
 
     <div class="form-group">
+
         <textarea id="message" name="message" placeholder="Tell us about your project" rows="5" required></textarea>
+
     </div>
 
     <button type="submit" class="btn btn-primary btn-full">
+
         <span class="btn-text">Send Message</span>
+
         <i class="fas fa-paper-plane"></i>
+
     </button>
 
     <div class="form-message" id="form-message"></div>
+
 </form>
+
             </div>
+
         </div>
+
     </section>
 
     <!-- FOOTER -->
+
     <footer class="footer">
+
         <div class="container">
+
             <div class="footer-grid">
+
                 <div class="footer-col footer-about">
+
                     <a href="#home" class="footer-logo">
+
                         <span class="logo-text">Designora</span>
+
                     </a>
+
                     <p class="footer-desc">We are a premium web design and development agency crafting beautiful digital experiences that drive business growth.</p>
 
                     <div class="footer-social">
+
                         <a href="https://www.facebook.com/profile.php?id=61582255796308" class="social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+
                             <i class="fab fa-facebook-f"></i>
+
                         </a>
+
                         <a href="https://x.com/Designora_" class="social-link" aria-label="Twitter" target="_blank" rel="noopener noreferrer">
+
                             <i class="fab fa-twitter"></i>
+
                         </a>
+
                         <a href="https://www.instagram.com/designora_lk/" class="social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+
                             <i class="fab fa-instagram"></i>
+
                         </a>
-                        <a href="https://www.tiktok.com/@designora_allclouds_lk?_r=1&_t=ZS-94atU2WKkoW" class="social-link" aria-label="tiktok" target="tiktok" rel="noopener noreferrer">
+
+                        <a href="https://www.tiktok.com/@designora_allclouds_lk?_r=1&amp;_t=ZS-94atU2WKkoW" class="social-link" aria-label="tiktok" target="tiktok" rel="noopener noreferrer">
+
                             <i class="fab fa-tiktok"></i>
+
                         </a>
+
                     </div>
+
                 </div>
 
                 <div class="footer-col">
+
                     <h4 class="footer-heading">Quick Links</h4>
+
                     <ul class="footer-links">
+
                         <li><a href="#home">Home</a></li>
+
                         <li><a href="#about">About</a></li>
+
                         <li><a href="#services">Services</a></li>
+
                         <li><a href="#portfolio">Portfolio</a></li>
+
                         <li><a href="#team">Team</a></li>
+
                         <li><a href="#contact">Contact</a></li>
+
                     </ul>
+
                 </div>
 
                 <div class="footer-col">
+
                     <h4 class="footer-heading">Services</h4>
+
                     <ul class="footer-links">
+
                         <li><a href="#services">Website Development</a></li>
+
                         <li><a href="#services">UI/UX Design</a></li>
+
                         <li><a href="#services">E-commerce</a></li>
+
                         <li><a href="#services">Web Applications</a></li>
+
                         <li><a href="#services">SEO Optimization</a></li>
+
                     </ul>
+
                 </div>
 
                 <div class="footer-col">
+
                     <h4 class="footer-heading">Contact Info</h4>
+
                     <ul class="footer-contact">
+
                         <li><i class="fas fa-envelope"></i> designoraallclouds@gmail.com</li>
+
                         <li><i class="fas fa-phone"></i> 0766848345</li>
+
                         <li><i class="fas fa-map-marker-alt"></i> all cloud.lk</li>
+
                     </ul>
+
                 </div>
+
             </div>
 
             <div class="footer-bottom">
+
                 <p>&copy; 2026 Designora. All rights reserved.</p>
+
             </div>
+
         </div>
+
     </footer>
 
     <script src="/static/script.js"></script>
+
 </body>
+
 </html>
