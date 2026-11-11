@@ -8,6 +8,7 @@ The primary objective of this platform is to establish a strong online presence 
 
 The website was designed with a modern user interface, responsive architecture, and user-centered experience to ensure accessibility across all devices. The solution focuses on improving brand visibility, customer engagement, and lead generation for business growth.
 
+live link : https://designora.pythonanywhere.com/
 
 ##  Business Problem
 
